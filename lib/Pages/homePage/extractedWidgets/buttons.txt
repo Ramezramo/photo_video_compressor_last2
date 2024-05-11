@@ -1,0 +1,72 @@
+
+import 'package:awesome_dialog/awesome_dialog.dart';
+
+import 'package:flutter/material.dart';
+
+
+
+
+class TheButtonOfStop extends StatelessWidget {
+  const TheButtonOfStop({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.stop_circle_rounded),
+      iconSize: 45,
+      color: Colors.red,
+      onPressed: () {},
+    );
+  }
+}
+
+class TheIconOFDone extends StatelessWidget {
+  const TheIconOFDone({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      Icons.check,
+      color: Colors.green,
+    );
+  }
+}
+
+class reloadButton extends StatelessWidget {
+  const reloadButton({super.key, this.OnPressed});
+  final void Function()? OnPressed;
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: OnPressed,
+      icon: const Icon(Icons.refresh),
+    );
+  }
+}
+
+
+class StartCompressingButton extends StatelessWidget {
+  const StartCompressingButton({
+    super.key,
+    required this.context,
+    required this.pressEvent,
+  });
+  final Function() pressEvent;
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: AnimatedButton(
+        text: 'Start Compressing',
+        color: Colors.deepPurple,
+        pressEvent: pressEvent,
+      ),
+    );
+  }
+}

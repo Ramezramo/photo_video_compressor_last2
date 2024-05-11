@@ -1,0 +1,43 @@
+
+
+
+import 'package:flutter/material.dart';
+
+
+
+
+
+
+import 'buttons.dart';
+import 'otherWidgets.txt';
+
+class firstPageWidget extends StatelessWidget {
+  const firstPageWidget(
+      {super.key,
+        required this.OnPressed,
+        required this.cameraFiles,
+        required this.pressEvent});
+  final void Function()? OnPressed;
+  final String cameraFiles;
+  final Function() pressEvent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        WaitingThumbNail(context: context),
+        linearPercentIndicatorWithPadding(
+            context: context, video_Compressing_Percentage_Filtered: "00"),
+        rowOfTextOfCompressedFilesNum(
+          OnPressed: OnPressed,
+          compressed: "",
+          total_Files_Length: cameraFiles,
+          compressorIsStatus: '0',
+        ),
+        linearPercentIndicatorWithPadding(
+            context: context, video_Compressing_Percentage_Filtered: "00"),
+        StartCompressingButton(context: context, pressEvent: pressEvent)
+      ],
+    );
+  }
+}

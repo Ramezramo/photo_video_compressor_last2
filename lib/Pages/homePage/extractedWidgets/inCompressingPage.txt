@@ -1,0 +1,95 @@
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter/services.dart';
+
+import 'otherWidgets.txt';
+
+
+
+
+
+
+
+class startedCompressingVidProssesWidget extends StatelessWidget {
+  final String totalFilesPercentage;
+
+  final String currentFilePercentage;
+  final String cameraFiles;
+
+  final String filesCompressed;
+  final picthumbnail;
+  final Uint8List? vidthumbnail;
+
+  const startedCompressingVidProssesWidget({
+    super.key,
+    required this.cameraFiles,
+    required this.filesCompressed,
+    required this.totalFilesPercentage,
+    required this.currentFilePercentage,
+    this.picthumbnail,
+    this.vidthumbnail,
+  });
+  @override
+  Widget build(BuildContext context) {
+    // print("Code skdjfhskdfjh");
+    // print(pictureThumbNail);
+    return Column(
+      children: [
+        videoThumbnail(thumbnailVideoPath: vidthumbnail, context: context),
+        linearPercentIndicatorWithPadding(
+            context: context,
+            video_Compressing_Percentage_Filtered: totalFilesPercentage),
+        rowOfTextOfCompressedFilesNum(
+          compressed: filesCompressed,
+          total_Files_Length: cameraFiles,
+          compressorIsStatus: "1",
+        ),
+        linearPercentIndicatorWithPadding(
+            context: context,
+            video_Compressing_Percentage_Filtered: currentFilePercentage),
+      ],
+    );
+  }
+}
+
+class startedCompressingPicProssesWidget extends StatelessWidget {
+  final String totalFilesPercentage;
+
+  final String currentFilePercentage;
+  final String cameraFiles;
+
+  final String filesCompressed;
+  final picthumbnail;
+
+  const startedCompressingPicProssesWidget({
+    super.key,
+    required this.cameraFiles,
+    required this.filesCompressed,
+    required this.totalFilesPercentage,
+    required this.currentFilePercentage,
+    this.picthumbnail,
+  });
+  @override
+  Widget build(BuildContext context) {
+    print("Code skdjfhskdfjh");
+    print(picthumbnail);
+    return Column(
+      children: [
+        ThumbnailViewWidget(imagePath: picthumbnail),
+        linearPercentIndicatorWithPadding(
+            context: context,
+            video_Compressing_Percentage_Filtered: totalFilesPercentage),
+        rowOfTextOfCompressedFilesNum(
+          compressed: filesCompressed,
+          total_Files_Length: cameraFiles,
+          compressorIsStatus: "1",
+        ),
+        linearPercentIndicatorWithPadding(
+            context: context,
+            video_Compressing_Percentage_Filtered: currentFilePercentage),
+      ],
+    );
+  }
+}
