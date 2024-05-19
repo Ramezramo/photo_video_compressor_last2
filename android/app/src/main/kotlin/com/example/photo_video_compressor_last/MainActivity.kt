@@ -31,12 +31,15 @@ class MainActivity: FlutterActivity() {
                 call, result ->
             if(call.method=="STARTPROCESS") {
 
-            }else if (call.method == "STOPPROCESS") {
+                }else if (call.method == "STOPPROCESS") {
 
-            }else if (call.method=="giveMEcameraData"){
-                val dataReturn = getCameraData()
-                result.success(dataReturn)
-            }else if (call.method=="giveMEThisFolderData"){
+                } else if (call.method == "giveMEcameraData") {
+                    val dataReturn = getCameraData()
+                    
+                    println("code 45756847967")
+                    println("SUCCESS")
+                    result.success(dataReturn)
+                }else if (call.method=="giveMEThisFolderData"){
                 val folderPath = call.argument<String>("Folderpath")
                 if (folderPath != null) {
                     val dataReturn = getFolderData(folderPath)
@@ -283,7 +286,7 @@ class MainActivity: FlutterActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun getCameraData(): Map<String, String> {
+    private fun getCameraData(): Map<String, String>? {
 //        println("inside the native fun get camera files")
         val resultMap = mutableMapOf<String, String>()
         try {
@@ -297,10 +300,15 @@ class MainActivity: FlutterActivity() {
                 println("code 39487_34534")
                 println(subfolder)
 
+
                 if (subfolder.exists() && subfolder.isDirectory) {
                     val subfolderFiles = subfolder.listFiles()
                    println("at 9238745_3458909")
                    println(subfolderFiles)
+                    if (subfolderFiles == null){
+                        resultMap["error"] = "cannot get the permission"
+                        return resultMap
+                     }
                     subfolderFiles?.forEach { file ->
                         if (file.isFile) {
                             val path = file.absolutePath

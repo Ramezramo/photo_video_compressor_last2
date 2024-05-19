@@ -174,7 +174,11 @@ class _MainHomePageState extends State<MainHomePage> {
   List<MapEntry<String, int>> videosObtainedFromNative = [];
 
   bool isTransactionInProgress = true;
+  bool thereIsAnError = false;
+  String errorMessage = "";
   void restarter() {
+    errorMessage = "";
+    thereIsAnError = false;
     isTransactionInProgress = true;
     filesSizeAfterCompressFromHomePage = 0;
     filesSizeBeforeCompressFromHomePage = 0;
@@ -281,36 +285,58 @@ class _MainHomePageState extends State<MainHomePage> {
   Future<void> getCameraFilesData() async {
     await requestStoragePermission();
 
-    Map data = await channel.invokeMethod("giveMEcameraData");
+    dynamic data = await channel.invokeMethod("giveMEcameraData");
+    print("code come in boy");
+    print(data['error']);
+    if (data.containsKey("error")) {
+      // Handle error
+      print("Error: ${data['error']}");
+      //
+      thereIsAnError = true;
+      errorMessage = data['error'];
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertForNotice(AlertText: errorMessage);
+        },
+      );
+    } else {
+      // Process data
+      thereIsAnError = false;
+      List<MapEntry<dynamic, dynamic>> sortedEntries = data.entries.toList();
+      print("code fghdfgh");
+      print(sortedEntries);
+
+      total_Files_Length_Obtained_From_NATIVE = sortedEntries.length;
+      for (var entry in sortedEntries) {
+        String fileextension = path.extension(entry.key).toLowerCase();
+        int valueAsInt = int.tryParse(entry.value) ??
+            0; // Convert to int, default to 0 if conversion fails
+
+        if (fileextension == '.jpg' ||
+            fileextension == '.jpeg' ||
+            fileextension == '.png') {
+          photoesPreparedLen++;
+          imagesObtainedFromNative
+              .add(MapEntry(entry.key.toString(), valueAsInt));
+        } else if (fileextension == '.mp4' ||
+            fileextension == '.mov' ||
+            fileextension == '.avi') {
+          videosPreparedLen++;
+          videosObtainedFromNative
+              .add(MapEntry(entry.key.toString(), valueAsInt));
+        }
+      }
+
+      setState(() {});
+    }
     print("code is 439534534");
     print(data);
-    List<MapEntry<dynamic, dynamic>> sortedEntries = data.entries.toList();
-    print("code fghdfgh");
-    print(sortedEntries);
+    // if (data == null){
+    //
 
-    total_Files_Length_Obtained_From_NATIVE = sortedEntries.length;
-
-    for (var entry in sortedEntries) {
-      String fileextension = path.extension(entry.key).toLowerCase();
-      int valueAsInt = int.tryParse(entry.value) ??
-          0; // Convert to int, default to 0 if conversion fails
-
-      if (fileextension == '.jpg' ||
-          fileextension == '.jpeg' ||
-          fileextension == '.png') {
-        photoesPreparedLen++;
-        imagesObtainedFromNative
-            .add(MapEntry(entry.key.toString(), valueAsInt));
-      } else if (fileextension == '.mp4' ||
-          fileextension == '.mov' ||
-          fileextension == '.avi') {
-        videosPreparedLen++;
-        videosObtainedFromNative
-            .add(MapEntry(entry.key.toString(), valueAsInt));
-      }
-    }
-
-    setState(() {});
+    // }
   }
 
   Future<List<File>> getFilesInFolderSortedByDate() async {
@@ -490,6 +516,7 @@ class _MainHomePageState extends State<MainHomePage> {
         (VideoProgress) => setState(() => this.VideoProgress = VideoProgress));
     _fabHeight = _initFabHeight;
     print("CODE SDLFKJSKJ");
+    print(thereIsAnError);
 
     // progress_maker();
     // totalFiles = sortedMap.length;
@@ -853,16 +880,28 @@ class _MainHomePageState extends State<MainHomePage> {
                 photoesPrepared: photoesPreparedLen.toString(),
                 vidsPrepared: videosPreparedLen.toString(),
                 pressEvent: () {
-                  setState(() {
-                    firsPageIdentifier = false;
-                    startCompressingChain();
-                  });
+                  if (!thereIsAnError) {
+                    setState(() {
+                      firsPageIdentifier = false;
+                      startCompressingChain();
+                    });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertForNotice(AlertText: errorMessage);
+                      },
+                    );
+                  }
                 },
                 cameraFiles: total_Files_Length_Obtained_From_NATIVE,
                 OnPressedForRefresh: () {
+                  // print("6" * 500);
                   setState(() {
                     restarter();
                   });
+
+                  // AlertForNotice(AlertText: errorMessage);
                 })
           else if (startedCompressingProsses && photoOrPic == 1)
             startedCompressingProssesWidget(
@@ -2013,6 +2052,40 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           // Dropdown for selecting a value
         ],
       ),
+    );
+  }
+}
+
+class AlertForNotice extends StatefulWidget {
+  const AlertForNotice({Key? key, required this.AlertText}) : super(key: key);
+
+  final String AlertText;
+
+  @override
+  _AlertForNoticeState createState() => _AlertForNoticeState();
+}
+
+class _AlertForNoticeState extends State<AlertForNotice> {
+  @override
+  Widget build(BuildContext context) {
+    print("6" * 500);
+
+    return AlertDialog(
+      title: const Text("Alert"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(widget.AlertText),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("Done"),
+        ),
+      ],
     );
   }
 }
